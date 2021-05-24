@@ -1,0 +1,20 @@
+{
+    "name": "mihai/eventbook-wordpress-plugin",
+    "description": "Wordpress plugin for eventbook api",
+    "type": "plugin",
+    "require": {
+        "guzzlehttp/guzzle": "^7.3"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Eventbook\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mihai Craita",
+            "email": "mihai@eventbook.ro"
+        }
+    ]
+}
