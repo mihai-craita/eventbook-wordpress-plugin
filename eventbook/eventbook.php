@@ -21,6 +21,10 @@ add_action( 'rest_api_init', function () {
         'methods' => 'GET',
         'callback' => 'getEventInfo'
     ]);
+    register_rest_route('eventbook', '/client', [
+        'methods' => 'POST',
+        'callback' => 'postClient'
+    ]);
 });
 
 function getEventInfo($request)
@@ -28,6 +32,13 @@ function getEventInfo($request)
     $eventId = (int) $request->get_param('eventId');
     $api  = new Api();
     return rest_ensure_response($api->getEventInfo($eventId));
+}
+
+function postClient($request)
+{
+    $client = $request->get_json_params();
+    $api  = new Api();
+    return rest_ensure_response($api->saveClient($client));
 }
 
 /*
