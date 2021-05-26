@@ -17,5 +17,5 @@ async function postClient(client) {
 
 getEventInfo(123).then(data => console.log(data));
 postClient(
-  {'first_name': 'Mihai', 'last_name': 'Tester', 'phone':  '07222', 'email': 'mihai@mhra.com', 'observations': 'test'}
+  {'first_name': 'Mihai', 'last_name': 'Tester', 'phone':  '07222', 'email': 'mihai@eventbook.ro', 'observations': 'test'}
 ).then(data => console.log(data));
