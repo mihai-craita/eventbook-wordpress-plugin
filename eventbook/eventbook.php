@@ -16,6 +16,30 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use Eventbook\Api;
 
+add_action('admin_init', 'addSetting');
+function addSetting() {
+    add_settings_section('evb_settings_section', 'Eventbook settings', 'evb_section_callback_function', 'general');
+    register_setting('general', 'evb_api_token');
+    add_settings_field(
+        'evb_api_token',
+        'Eventbook API Token',
+        'evb_api_token_setting_callback_function',
+        'general',
+        'evb_settings_section',
+        array( 'label_for' => 'evb_api_token' )
+    );
+}
+
+function evb_api_token_setting_callback_function() {
+    return _e('<input type="text" name="evb_api_token" value="' . get_option('evb_api_token') . '" />');
+}
+
+function evb_section_callback_function() {
+    _e('<p>The api token can be obtained by contacting eventbook.ro</p>','jwl-ultimate-tinymce');
+}
+
+/* register api routes */
+$api = new Api(get_option('evb_api_token'));
 add_action( 'rest_api_init', function () {
     register_rest_route('eventbook', '/event', [
         'methods' => 'GET',
@@ -30,14 +54,12 @@ add_action( 'rest_api_init', function () {
 function getEventInfo($request)
 {
     $eventId = (int) $request->get_param('eventId');
-    $api  = new Api();
     return rest_ensure_response($api->getEventInfo($eventId));
 }
 
 function postClient($request)
 {
     $client = $request->get_json_params();
-    $api  = new Api();
     return rest_ensure_response($api->saveClient($client));
 }
 

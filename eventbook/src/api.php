@@ -7,11 +7,12 @@ use GuzzleHttp\Client;
 class Api
 {
     private $baseUri = 'https://dev.eventbook.ro/api/';
+    private $accessToken;
 
-    public function __construct($baseUri = 'https://dev.eventbook.ro/api/')
+    public function __construct($accessToken, $baseUri = 'https://dev.eventbook.ro/api/')
     {
         $this->baseUri = $baseUri;
-        $this->accesToken = '';
+        $this->accessToken = $accessToken;
     }
 
     public function getEventInfo(int $eventId)
