@@ -3,6 +3,12 @@ Wordpress plugin for eventbook api
 
 In your js you can call functions like so:
 
+```
 postClient(
-  {'first_name': 'Mihai', 'last_name': 'Tester', 'phone':  '07222', 'email': 'mihai@mhra.com', 'observations': 'test'}
-).then(data => console.log(data));
+  {
+    'first_name': 'Ion',
+    'last_name': 'Popescu',
+    'phone':  '040-1110-444',
+    'email': 'mihai@eventbook.ro',
+    'observations': 'this is a test client'
+  }).then(responseData => console.log(responseData));
