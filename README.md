@@ -4,7 +4,17 @@ Wordpress plugin for eventbook api
 In your js you can call functions like so:
 
 ```
-postClient(
+/*
+Get event details
+param: eventId int
+*/
+evb.getEvent(16500);
+
+/*
+Add a new client
+param: client object
+*/
+evb.addClient(
   {
     'first_name': 'Ion',
     'last_name': 'Popescu',
