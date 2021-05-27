@@ -40,9 +40,6 @@ function evb_section_callback_function() {
 }
 
 /* register api routes */
-function getApiToken () {
-    return get_option('evb_api_token');
-}
 add_action( 'rest_api_init', function () {
     register_rest_route('eventbook', '/event', [
         'methods' => 'GET',
@@ -50,9 +47,16 @@ add_action( 'rest_api_init', function () {
     ]);
     register_rest_route('eventbook', '/client', [
         'methods' => 'POST',
-        'callback' => 'postClient'
+        'callback' => 'addClient'
+    ]);
+    register_rest_route('eventbook', '/tickets', [
+        'methods' => 'POST',
+        'callback' => 'addTickets'
     ]);
 });
+function getApiToken () {
+    return get_option('evb_api_token');
+}
 
 function getEventInfo($request)
 {
@@ -61,11 +65,18 @@ function getEventInfo($request)
     return rest_ensure_response($api->getEventInfo($eventId));
 }
 
-function postClient($request)
+function addClient($request)
 {
     $api = new Api(getApiToken());
     $client = $request->get_json_params();
     return rest_ensure_response($api->saveClient($client));
+}
+
+function addTickets($request)
+{
+    $api = new Api(getApiToken());
+    $ticketOrder = $request->get_json_params();
+    return rest_ensure_response($api->addTickets($ticketOrder));
 }
 
 /*

@@ -34,4 +34,17 @@ class Api
         $responseClient = json_decode($response->getBody()->getContents(), true);
         return $responseClient;
     }
+
+    public function addTickets($ticketOrder)
+    {
+        $apiClient = new Client([ 'base_uri' => $this->baseUri ]);
+        $response = $apiClient->request('POST', 'tickets/add', [
+            'json' => $ticketOrder,
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->accessToken,
+            ]
+        ]);
+        $responseClient = json_decode($response->getBody()->getContents(), true);
+        return $responseClient;
+    }
 }
