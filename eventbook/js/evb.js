@@ -31,12 +31,12 @@ class Eventbook {
 
 let evb = new Eventbook();
 
-evb.getEvent(16754).then(data => console.log(data));
-evb.addClient({
-  'first_name': 'Mihai', 'last_name': 'Tester', 'phone':  '07222', 'email': 'mihai@eventbook.ro', 'observations': 'test'
-}).then(data => console.log(data));
+// evb.getEvent(16754).then(data => console.log(data));
+// evb.addClient({
+//   'first_name': 'Mihai', 'last_name': 'Tester', 'phone':  '07222', 'email': 'mihai@eventbook.ro', 'observations': 'test'
+// }).then(data => console.log(data));
 
-evb.addTickets({
-  'performance_id': 76884,
-  'number_of_tickets': 1
-});
+// evb.addTickets({
+//   'performance_id': 76884,
+//   'number_of_tickets': 1
+// });

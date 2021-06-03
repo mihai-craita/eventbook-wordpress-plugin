@@ -22,3 +22,11 @@ evb.addClient(
     'email': 'mihai@eventbook.ro',
     'observations': 'this is a test client'
   }).then(responseData => console.log(responseData));
+
+/*
+Add tickets for performance
+*/
+evb.addTickets({
+  'performance_id': 76884,
+  'number_of_tickets': 1
+});
