@@ -17,34 +17,46 @@ class Api
 
     public function getEventInfo(int $eventId)
     {
-        $client = new Client(['base_uri' => $this->baseUri]);
-        $response = $client->request('GET', 'events/' . $eventId);
-        return \json_decode($response->getBody()->getContents());
+        try {
+            $client = new Client(['base_uri' => $this->baseUri]);
+            $response = $client->request('GET', 'events/' . $eventId);
+            return \json_decode($response->getBody()->getContents());
+        } catch (\Exception $ex) {
+            return $ex->getMessage();
+        }
     }
 
     public function saveClient($client)
     {
-        $apiClient = new Client([ 'base_uri' => $this->baseUri ]);
-        $response = $apiClient->request('POST', 'client', [
-            'json' => $client,
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->accessToken,
-            ]
-        ]);
-        $responseClient = json_decode($response->getBody()->getContents(), true);
-        return $responseClient;
+        try {
+            $apiClient = new Client([ 'base_uri' => $this->baseUri ]);
+            $response = $apiClient->request('POST', 'client', [
+                'json' => $client,
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->accessToken,
+                ]
+            ]);
+            $responseClient = json_decode($response->getBody()->getContents(), true);
+            return $responseClient;
+        } catch (\Exception $ex) {
+            return $ex->getMessage();
+        }
     }
 
     public function addTickets($ticketOrder)
     {
-        $apiClient = new Client([ 'base_uri' => $this->baseUri ]);
-        $response = $apiClient->request('POST', 'tickets/add', [
-            'json' => $ticketOrder,
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->accessToken,
-            ]
-        ]);
-        $responseClient = json_decode($response->getBody()->getContents(), true);
-        return $responseClient;
+        try {
+            $apiClient = new Client([ 'base_uri' => $this->baseUri ]);
+            $response = $apiClient->request('POST', 'tickets/add', [
+                'json' => $ticketOrder,
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->accessToken,
+                ]
+            ]);
+            $responseClient = json_decode($response->getBody()->getContents(), true);
+            return $responseClient;
+        } catch (\Exception $ex) {
+            return $ex->getMessage();
+        }
     }
 }
