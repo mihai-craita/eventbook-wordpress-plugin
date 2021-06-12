@@ -42,6 +42,11 @@ class Eventbook {
       .then(response => response.json());
   }
 
+  async getTransaction(transactionId) {
+    return fetch('/?rest_route=/eventbook/transaction&transactionId=' + transactionId)
+      .then(response => response.json());
+  }
+
   redirectToPaymentGateway(transactionId) {
     window.location.href = 'https://dev.eventbook.ro/card-payment-form/' + transactionId;
   }
@@ -50,8 +55,6 @@ class Eventbook {
 let evb = new Eventbook();
 
 async function evbTest() {
-  var p = await evb.getPerformance(75636);
-  console.log(p);
   const client = await evb.addClient({
       "first_name": "Ion",
       "last_name": "Popescu",
@@ -63,7 +66,7 @@ async function evbTest() {
         "terms_and_conditions": 1
       }
     });
-  const transaction = await evb.addTransaction();
+  let transaction = await evb.addTransaction();
   await evb.addTickets({
     "performance_id": 75636,
     "number_of_tickets": 1,
@@ -72,10 +75,11 @@ async function evbTest() {
   });
   await evb.addTickets({
     "performance_id": 75557,
-    "number_of_tickets": 1,
+    "number_of_tickets": 2,
     "transaction_id": transaction.id,
     "client_id": client.id
   });
+  transaction = await evb.getTransaction(transaction.id);
   console.log(transaction);
   // evb.redirectToPaymentGateway(transaction.id);
 }

@@ -57,6 +57,10 @@ add_action( 'rest_api_init', function () {
         'methods' => 'POST',
         'callback' => 'addTransaction'
     ]);
+    register_rest_route('eventbook', '/transaction', [
+        'methods' => 'GET',
+        'callback' => 'getTransaction'
+    ]);
     register_rest_route('eventbook', '/tickets', [
         'methods' => 'POST',
         'callback' => 'addTickets'
@@ -99,6 +103,13 @@ function addTransaction($request)
 {
     $api = new Api(getApiToken());
     return rest_ensure_response($api->addTransaction());
+}
+
+function getTransaction($request)
+{
+    $api = new Api(getApiToken());
+    $transactionId = (int) $request->get_param('transactionId');
+    return rest_ensure_response($api->getTransaction($transactionId));
 }
 
 /*

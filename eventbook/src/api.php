@@ -86,4 +86,22 @@ class Api
             return $ex->getMessage();
         }
     }
+
+    public function getTransaction(int $transactionId)
+    {
+        try {
+            $client = new Client(['base_uri' => $this->baseUri]);
+            $response = $client->request('GET', 'transaction/' . $transactionId, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->accessToken,
+                    'Accept'     => 'application/json',
+                ]
+            ]
+            );
+            return \json_decode($response->getBody()->getContents());
+        } catch (\Exception $ex) {
+            throw $ex;
+            return $ex->getMessage();
+        }
+    }
 }

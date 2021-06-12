@@ -26,7 +26,7 @@ evb.addClient(
       "newsletter": 1,
       "terms_and_conditions": 1
     }
-  }).then(responseData => console.log(responseData));
+  });
 ```
 
 Add a new transaction
@@ -37,11 +37,16 @@ evb.addTransaction();
 Add tickets for a specific performance
 ```
 evb.addTickets({
-  "performance_id": 76884,
+  "performance_id": performance.id,
   "number_of_tickets": 1,
-  "transaction_id": 1,
-  "client_id": 1
+  "transaction_id": transaction.id,
+  "client_id": client.id
 });
+```
+
+Show transaction details
+```
+evb.getTransaction(transaction.id);
 ```
 
 Redirect to payment gateway where the transaction will be payed
@@ -65,7 +70,7 @@ async function evbTest() {
         "terms_and_conditions": 1
       }
     });
-  const transaction = await evb.addTransaction();
+  let transaction = await evb.addTransaction();
   await evb.addTickets({
     "performance_id": 75636,
     "number_of_tickets": 1,
@@ -78,8 +83,9 @@ async function evbTest() {
     "transaction_id": transaction.id,
     "client_id": client.id
   });
+  transaction = await evb.getTransaction(transaction.id);
   console.log(transaction);
-  // evb.redirectToPaymentGateway(transaction.id);
+  evb.redirectToPaymentGateway(transaction.id);
 }
 
 evbTest();
