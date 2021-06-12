@@ -49,11 +49,16 @@ add_action( 'rest_api_init', function () {
         'methods' => 'POST',
         'callback' => 'addClient'
     ]);
+    register_rest_route('eventbook', '/transaction', [
+        'methods' => 'POST',
+        'callback' => 'addTransaction'
+    ]);
     register_rest_route('eventbook', '/tickets', [
         'methods' => 'POST',
         'callback' => 'addTickets'
     ]);
 });
+
 function getApiToken () {
     return get_option('evb_api_token');
 }
@@ -77,6 +82,12 @@ function addTickets($request)
     $api = new Api(getApiToken());
     $ticketOrder = $request->get_json_params();
     return rest_ensure_response($api->addTickets($ticketOrder));
+}
+
+function addTransaction($request)
+{
+    $api = new Api(getApiToken());
+    return rest_ensure_response($api->addTransaction());
 }
 
 /*

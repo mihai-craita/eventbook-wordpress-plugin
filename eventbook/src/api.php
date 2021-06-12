@@ -59,4 +59,20 @@ class Api
             return $ex->getMessage();
         }
     }
+
+    public function addTransaction()
+    {
+        try {
+            $apiClient = new Client([ 'base_uri' => $this->baseUri ]);
+            $response = $apiClient->request('POST', 'transaction', [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->accessToken,
+                ]
+            ]);
+            $responseClient = json_decode($response->getBody()->getContents(), true);
+            return $responseClient;
+        } catch (\Exception $ex) {
+            return $ex->getMessage();
+        }
+    }
 }
