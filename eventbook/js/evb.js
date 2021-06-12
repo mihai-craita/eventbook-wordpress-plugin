@@ -57,13 +57,13 @@ async function evbTest() {
     });
   const transaction = await evb.addTransaction();
   await evb.addTickets({
-    "performance_id": 76884,
+    "performance_id": 75636,
     "number_of_tickets": 1,
     "transaction_id": transaction.id,
     "client_id": client.id
   });
   await evb.addTickets({
-    "performance_id": 76885,
+    "performance_id": 75557,
     "number_of_tickets": 1,
     "transaction_id": transaction.id,
     "client_id": client.id

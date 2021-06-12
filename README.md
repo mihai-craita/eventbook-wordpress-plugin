@@ -28,10 +28,58 @@ evb.addClient(
   }).then(responseData => console.log(responseData));
 
 /*
+Add a new transaction
+*/
+evb.addTransaction();
+
+/*
 Add tickets for performance
 */
 evb.addTickets({
   "performance_id": 76884,
   "number_of_tickets": 1,
+  "transaction_id": 1,
   "client_id": 1
 });
+
+/*
+Redirect to payment gateway
+*/
+evb.redirectToPaymentGateway(transaction.id);
+```
+
+Below is a full example:
+```
+let evb = new Eventbook();
+
+async function evbTest() {
+  const client = await evb.addClient({
+      "first_name": "Ion",
+      "last_name": "Popescu",
+      "phone":  "040-1110-444",
+      "email": "mihai@eventbook.ro",
+      "observations": "this is a test client",
+      "extra_data": {
+        "newsletter": 1,
+        "terms_and_conditions": 1
+      }
+    });
+  const transaction = await evb.addTransaction();
+  await evb.addTickets({
+    "performance_id": 75636,
+    "number_of_tickets": 1,
+    "transaction_id": transaction.id,
+    "client_id": client.id
+  });
+  await evb.addTickets({
+    "performance_id": 75557,
+    "number_of_tickets": 1,
+    "transaction_id": transaction.id,
+    "client_id": client.id
+  });
+  console.log(transaction);
+  // evb.redirectToPaymentGateway(transaction.id);
+}
+
+evbTest();
+```
