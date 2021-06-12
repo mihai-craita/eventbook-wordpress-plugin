@@ -38,7 +38,7 @@ evb.addClient(
     "phone":  "040-1110-444",
     "email": "mihai@eventbook.ro",
     "observations": "this is a test client",
-    "extra": {
+    "extra_data": {
       "newsletter": 1,
       "terms_and_conditions": 1
     }

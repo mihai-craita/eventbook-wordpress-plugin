@@ -21,7 +21,7 @@ evb.addClient(
     "phone":  "040-1110-444",
     "email": "mihai@eventbook.ro",
     "observations": "this is a test client",
-    "extra": {
+    "extra_data": {
       "newsletter": 1,
       "terms_and_conditions": 1
     }
@@ -32,5 +32,6 @@ Add tickets for performance
 */
 evb.addTickets({
   "performance_id": 76884,
-  "number_of_tickets": 1
+  "number_of_tickets": 1,
+  "client_id": 1
 });
