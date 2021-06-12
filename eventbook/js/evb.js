@@ -5,8 +5,14 @@ class Eventbook {
       'Content-Type': 'application/json'
     }
   };
+
   async getEvent(eventId) {
     return fetch('/?rest_route=/eventbook/event&eventId=' + eventId)
+      .then(response => response.json());
+  }
+
+  async getPerformance(performanceId) {
+    return fetch('/?rest_route=/eventbook/performance&performanceId=' + performanceId)
       .then(response => response.json());
   }
 
@@ -44,6 +50,8 @@ class Eventbook {
 let evb = new Eventbook();
 
 async function evbTest() {
+  var p = await evb.getPerformance(75636);
+  console.log(p);
   const client = await evb.addClient({
       "first_name": "Ion",
       "last_name": "Popescu",

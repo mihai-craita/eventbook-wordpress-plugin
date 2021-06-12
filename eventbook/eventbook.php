@@ -45,6 +45,10 @@ add_action( 'rest_api_init', function () {
         'methods' => 'GET',
         'callback' => 'getEventInfo'
     ]);
+    register_rest_route('eventbook', '/performance', [
+        'methods' => 'GET',
+        'callback' => 'getPerformance'
+    ]);
     register_rest_route('eventbook', '/client', [
         'methods' => 'POST',
         'callback' => 'addClient'
@@ -68,6 +72,13 @@ function getEventInfo($request)
     $api = new Api(getApiToken());
     $eventId = (int) $request->get_param('eventId');
     return rest_ensure_response($api->getEventInfo($eventId));
+}
+
+function getPerformance($request)
+{
+    $api = new Api(getApiToken());
+    $performanceId = (int) $request->get_param('performanceId');
+    return rest_ensure_response($api->getPerformance($performanceId));
 }
 
 function addClient($request)

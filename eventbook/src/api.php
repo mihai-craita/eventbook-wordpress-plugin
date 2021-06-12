@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 
 class Api
 {
-    private $baseUri = 'https://dev.eventbook.ro/api/';
+    private $baseUri;
     private $accessToken;
 
     public function __construct($accessToken, $baseUri = 'https://dev.eventbook.ro/api/')
@@ -26,10 +26,21 @@ class Api
         }
     }
 
+    public function getPerformance(int $performanceId)
+    {
+        try {
+            $client = new Client(['base_uri' => $this->baseUri]);
+            $response = $client->request('GET', 'performances/' . $performanceId);
+            return \json_decode($response->getBody()->getContents());
+        } catch (\Exception $ex) {
+            return $ex->getMessage();
+        }
+    }
+
     public function saveClient($client)
     {
         try {
-            $apiClient = new Client([ 'base_uri' => $this->baseUri ]);
+            $apiClient = new Client(['base_uri' => $this->baseUri]);
             $response = $apiClient->request('POST', 'client', [
                 'json' => $client,
                 'headers' => [
