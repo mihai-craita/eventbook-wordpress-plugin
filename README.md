@@ -1,19 +1,15 @@
 # eventbook-wordpress-plugin
 Wordpress plugin for eventbook api
 
-In your js you can call functions like so:
+In your js you can call a set of functions like so:
 
+Get event details with param: eventId int
 ```
-/*
-Get event details
-param: eventId int
-*/
 evb.getEvent(16500);
+```
 
-/*
-Add a new client
-param: client object
-*/
+Add a new client param: client object
+```
 evb.addClient(
   {
     "first_name": "Ion",
@@ -26,25 +22,25 @@ evb.addClient(
       "terms_and_conditions": 1
     }
   }).then(responseData => console.log(responseData));
+```
 
-/*
 Add a new transaction
-*/
+```
 evb.addTransaction();
+```
 
-/*
-Add tickets for performance
-*/
+Add tickets for a specific performance
+```
 evb.addTickets({
   "performance_id": 76884,
   "number_of_tickets": 1,
   "transaction_id": 1,
   "client_id": 1
 });
+```
 
-/*
-Redirect to payment gateway
-*/
+Redirect to payment gateway where the transaction will be payed
+```
 evb.redirectToPaymentGateway(transaction.id);
 ```
 
