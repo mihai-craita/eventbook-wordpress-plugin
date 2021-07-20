@@ -48,7 +48,7 @@ class Eventbook {
   }
 
   redirectToPaymentGateway(transactionId) {
-    window.location.href = 'https://dev.eventbook.ro/card-payment-form/' + transactionId;
+    window.location.href = 'https://eventbook.ro/card-payment-form/' + transactionId;
   }
 }
 

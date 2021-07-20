@@ -9,7 +9,7 @@ class Api
     private $baseUri;
     private $accessToken;
 
-    public function __construct($accessToken, $baseUri = 'https://dev.eventbook.ro/api/')
+    public function __construct($accessToken, $baseUri = 'https://eventbook.ro/api/')
     {
         $this->baseUri = $baseUri;
         $this->accessToken = $accessToken;
