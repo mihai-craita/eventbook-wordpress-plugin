@@ -37,4 +37,20 @@ final class ApiSaveClientTest extends TestCase
         $this->assertIsArray($result);
         $this->assertArrayHasKey('id', $result);
     }
+
+    public function testAddTicketAndDeleteItOnTransaction(): void
+    {
+        $api = new Api($this->token, $this->baseUri);
+        $transaction = $api->addTransaction();
+        $transaction = $api->addTickets([
+            "performance_id" => 75557,
+            "number_of_tickets" => 1,
+            "transaction_id" => $transaction['id'],
+        ]);
+        $this->assertIsArray($transaction['tickets']);
+        $ticketId = $transaction['tickets'][0]['id'];
+        var_dump($ticketId);
+        $this->assertIsInt($ticketId);
+        $this->assertTrue($api->deleteTicket($ticketId));
+    }
 }

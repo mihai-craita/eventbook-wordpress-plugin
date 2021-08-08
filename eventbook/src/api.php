@@ -96,12 +96,28 @@ class Api
                     'Authorization' => 'Bearer ' . $this->accessToken,
                     'Accept'     => 'application/json',
                 ]
-            ]
-            );
+            ]);
             return \json_decode($response->getBody()->getContents());
         } catch (\Exception $ex) {
             throw $ex;
             return $ex->getMessage();
+        }
+    }
+
+    public function deleteTicket(int $ticketId)
+    {
+        try {
+            $client = new Client(['base_uri' => $this->baseUri]);
+            $client->request('DELETE', 'tickets/remove/' . $ticketId, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->accessToken,
+                    'Accept'     => 'application/json',
+                ]
+            ]);
+            return true;
+        } catch (\Exception $ex) {
+            throw $ex;
+            return false;
         }
     }
 }
