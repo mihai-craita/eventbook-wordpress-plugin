@@ -49,7 +49,6 @@ final class ApiSaveClientTest extends TestCase
         ]);
         $this->assertIsArray($transaction['tickets']);
         $ticketId = $transaction['tickets'][0]['id'];
-        var_dump($ticketId);
         $this->assertIsInt($ticketId);
         $this->assertTrue($api->deleteTicket($ticketId));
     }
