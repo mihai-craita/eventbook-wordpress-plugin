@@ -43,9 +43,7 @@ class Api
             $apiClient = new Client(['base_uri' => $this->baseUri]);
             $response = $apiClient->request('POST', 'client', [
                 'json' => $client,
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->accessToken,
-                ]
+                'headers' => $this->getAuthHeaders()
             ]);
             $responseClient = json_decode($response->getBody()->getContents(), true);
             return $responseClient;
@@ -60,11 +58,10 @@ class Api
             $apiClient = new Client([ 'base_uri' => $this->baseUri ]);
             $response = $apiClient->request('POST', 'tickets/add', [
                 'json' => $ticketOrder,
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->accessToken,
-                ]
+                'headers' => $this->getAuthHeaders()
             ]);
-            $responseClient = json_decode($response->getBody()->getContents(), true);
+            $content = $response->getBody()->getContents();
+            $responseClient = json_decode($content, true);
             return $responseClient;
         } catch (\Exception $ex) {
             return $ex->getMessage();
@@ -76,11 +73,10 @@ class Api
         try {
             $apiClient = new Client([ 'base_uri' => $this->baseUri ]);
             $response = $apiClient->request('POST', 'transaction', [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->accessToken,
-                ]
+                'headers' => $this->getAuthHeaders()
             ]);
-            $responseClient = json_decode($response->getBody()->getContents(), true);
+            $content = $response->getBody()->getContents();
+            $responseClient = json_decode($content, true);
             return $responseClient;
         } catch (\Exception $ex) {
             return $ex->getMessage();
@@ -92,10 +88,7 @@ class Api
         try {
             $client = new Client(['base_uri' => $this->baseUri]);
             $response = $client->request('GET', 'transaction/' . $transactionId, [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->accessToken,
-                    'Accept'     => 'application/json',
-                ]
+                'headers' => $this->getAuthHeaders()
             ]);
             return \json_decode($response->getBody()->getContents());
         } catch (\Exception $ex) {
@@ -109,15 +102,20 @@ class Api
         try {
             $client = new Client(['base_uri' => $this->baseUri]);
             $client->request('DELETE', 'tickets/remove/' . $ticketId, [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->accessToken,
-                    'Accept'     => 'application/json',
-                ]
+                'headers' => $this->getAuthHeaders()
             ]);
             return true;
         } catch (\Exception $ex) {
             throw $ex;
             return false;
         }
+    }
+
+    private function getAuthHeaders(): array
+    {
+        return [
+            'Authorization' => 'Bearer ' . $this->accessToken,
+            'Accept'     => 'application/json',
+        ];
     }
 }

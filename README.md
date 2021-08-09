@@ -54,6 +54,12 @@ Redirect to payment gateway where the transaction will be payed
 evb.redirectToPaymentGateway(transaction.id);
 ```
 
+Delete a ticket from transaction
+```
+let ticketId = 1234;
+evb.deleteTicket(ticketId);
+```
+
 Below is a full example:
 ```
 let evb = new Eventbook();

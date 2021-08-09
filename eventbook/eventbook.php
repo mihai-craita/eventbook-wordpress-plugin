@@ -65,6 +65,10 @@ add_action( 'rest_api_init', function () {
         'methods' => 'POST',
         'callback' => 'addTickets'
     ]);
+    register_rest_route('eventbook', '/tickets/remove', [
+        'methods' => 'POST',
+        'callback' => 'deleteTicket'
+    ]);
 });
 
 function getApiToken () {
@@ -97,6 +101,13 @@ function addTickets($request)
     $api = new Api(getApiToken());
     $ticketOrder = $request->get_json_params();
     return rest_ensure_response($api->addTickets($ticketOrder));
+}
+
+function deleteTicket($request)
+{
+    $api = new Api(getApiToken());
+    $ticketId = (int) $request->get_param('ticketId');
+    return rest_ensure_response($api->deleteTicket($ticketId));
 }
 
 function addTransaction($request)

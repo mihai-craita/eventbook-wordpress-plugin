@@ -34,6 +34,15 @@ class Eventbook {
       .then(response => response.json());
   }
 
+  async deleteTicket(ticketId) {
+    return fetch('/?rest_route=/eventbook/tickets/remove&ticketId=' + ticketId, {
+      'method': 'POST',
+      headers: this.headers,
+    })
+      .then(response => response.json())
+      .catch(error => console.log(error));
+  }
+
   async addTransaction() {
     return fetch('/?rest_route=/eventbook/transaction', {
       'method': 'POST',
