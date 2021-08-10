@@ -111,6 +111,21 @@ class Api
         }
     }
 
+    public function applyDiscountCode(string $code, int $transactionId)
+    {
+        try {
+            $apiClient = new Client(['base_uri' => $this->baseUri]);
+            $response = $apiClient->request('POST', 'discount-code', [
+                'form_params' => ['code' => $code, 'transaction_id' => $transactionId],
+                'headers' => $this->getAuthHeaders()
+            ]);
+            $responseClient = json_decode($response->getBody()->getContents(), true);
+            return $responseClient;
+        } catch (\Exception $ex) {
+            return $ex->getMessage();
+        }
+    }
+
     private function getAuthHeaders(): array
     {
         return [

@@ -69,6 +69,10 @@ add_action( 'rest_api_init', function () {
         'methods' => 'POST',
         'callback' => 'deleteTicket'
     ]);
+    register_rest_route('eventbook', '/apply-discount-code', [
+        'methods' => 'POST',
+        'callback' => 'applyDiscountCode'
+    ]);
 });
 
 function getApiToken () {
@@ -121,6 +125,14 @@ function getTransaction($request)
     $api = new Api(getApiToken());
     $transactionId = (int) $request->get_param('transactionId');
     return rest_ensure_response($api->getTransaction($transactionId));
+}
+
+function applyDiscountCode($request)
+{
+    $api = new Api(getApiToken());
+    $code = $request->get_param('code');
+    $transactionId = (int) $request->get_param('transactionId');
+    return rest_ensure_response($api->applyDiscountCode($code, $transactionId));
 }
 
 /*
