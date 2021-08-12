@@ -57,11 +57,9 @@ class Eventbook {
   }
 
   async applyDiscountCode(code, transactionId) {
-    let formData = new FormData();
-    formData.append('transaction_id', transactionId);
-    formData.append('code', code);
     return fetch('/?rest_route=/eventbook/apply-discount-code', {
       'method': 'POST',
+      body: JSON.stringify({code: code, transaction_id: transactionId}),
       headers: this.headers
     })
       .then(response => response.json());
