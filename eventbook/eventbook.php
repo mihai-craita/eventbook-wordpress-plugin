@@ -135,7 +135,7 @@ function applyDiscountCode($request)
 {
     $api = new Api(getApiToken());
     $code = $request->get_param('code');
-    $transactionId = (int) $request->get_param('transactionId');
+    $transactionId = (int) $request->get_param('transaction_id');
     return rest_ensure_response($api->applyDiscountCode($code, $transactionId));
 }
 
