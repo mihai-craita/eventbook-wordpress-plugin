@@ -16,6 +16,7 @@ final class ApiSaveClientTest extends TestCase
         $dotenv->load();
         $this->token = $_ENV['TOKEN'];
         $this->baseUri = 'https://dev.eventbook.ro/api/';
+        $this->performanceId = 93202;
     }
 
     public function testSaveClient(): void
@@ -42,11 +43,13 @@ final class ApiSaveClientTest extends TestCase
     {
         $api = new Api($this->token, $this->baseUri);
         $transaction = $api->addTransaction();
+        $this->assertIsArray($transaction);
         $transaction = $api->addTickets([
-            "performance_id" => 75557,
+            "performance_id" => $this->performanceId,
             "number_of_tickets" => 1,
             "transaction_id" => $transaction['id'],
         ]);
+        $this->assertTrue(isset($transaction['tickets']));
         $this->assertIsArray($transaction['tickets']);
         $ticketId = $transaction['tickets'][0]['id'];
         $this->assertIsInt($ticketId);
