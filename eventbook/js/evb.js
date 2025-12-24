@@ -7,17 +7,17 @@ class Eventbook {
   };
 
   async getEvent(eventId) {
-    return fetch('/?rest_route=/eventbook/event&eventId=' + eventId)
+    return fetch('/?rest_route=/eventbook/v1/event&eventId=' + eventId)
       .then(response => response.json());
   }
 
   async getPerformance(performanceId) {
-    return fetch('/?rest_route=/eventbook/performance&performanceId=' + performanceId)
+    return fetch('/?rest_route=/eventbook/v1/performance&performanceId=' + performanceId)
       .then(response => response.json());
   }
 
   async addClient(client) {
-    return fetch('/?rest_route=/eventbook/client', {
+    return fetch('/?rest_route=/eventbook/v1/client', {
       'method': 'POST',
       headers: this.headers,
       body: JSON.stringify(client)
@@ -26,7 +26,7 @@ class Eventbook {
   }
 
   async addTickets(ticketOrder)  {
-    return fetch('/?rest_route=/eventbook/tickets', {
+    return fetch('/?rest_route=/eventbook/v1/tickets', {
       'method': 'POST',
       headers: this.headers,
       body: JSON.stringify(ticketOrder)
@@ -35,7 +35,7 @@ class Eventbook {
   }
 
   async deleteTicket(ticketId) {
-    return fetch('/?rest_route=/eventbook/tickets/remove&ticketId=' + ticketId, {
+    return fetch('/?rest_route=/eventbook/v1/tickets/remove&ticketId=' + ticketId, {
       'method': 'POST',
       headers: this.headers,
     })
@@ -44,7 +44,7 @@ class Eventbook {
   }
 
   async addTransaction() {
-    return fetch('/?rest_route=/eventbook/transaction', {
+    return fetch('/?rest_route=/eventbook/v1/transaction', {
       'method': 'POST',
       headers: this.headers
     })
@@ -52,12 +52,12 @@ class Eventbook {
   }
 
   async getTransaction(transactionId) {
-    return fetch('/?rest_route=/eventbook/transaction&transactionId=' + transactionId)
+    return fetch('/?rest_route=/eventbook/v1/transaction&transactionId=' + transactionId)
       .then(response => response.json());
   }
 
   async applyDiscountCode(code, transactionId) {
-    return fetch('/?rest_route=/eventbook/apply-discount-code', {
+    return fetch('/?rest_route=/eventbook/v1/apply-discount-code', {
       'method': 'POST',
       body: JSON.stringify({code: code, transaction_id: transactionId}),
       headers: this.headers

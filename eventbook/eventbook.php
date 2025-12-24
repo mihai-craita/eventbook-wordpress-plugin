@@ -1,16 +1,25 @@
 <?php
 
 /**
+ * Plugin Name: Eventbook Api Requests
+ * Plugin URI: https://eventbook.ro/
+ * Description: WordPress plugin that integrates the Eventbook API for event ticketing and management.
+ * Version: 0.0.2
+ * Author: Mihai Craita
+ * Author URI: https://eventbook.ro/
+ * Requires at least: 5.5
+ * Tested up to: 6.7
+ * Requires PHP: 7.4
+ * License: MIT
+ * Text Domain: eventbook-api
+ *
  * @package EventbookApi
- * @version 0.0.1
-Plugin Name: Eventbook Api Requests
-Plugin URI: http://wordpress.org/plugins/eventbook-api-requests/
-Description: This is a plugin that calls eventbook API.
-You can use it to make requests for your events by adding tickets or getting infos.
-Author: Mihai Craita
-Version: 0.0.1
-Author URI: https://eventbook.ro/
-*/
+ */
+
+// Exit if accessed directly
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -20,131 +29,260 @@ add_action('admin_init', 'addSetting');
 
 function addSetting()
 {
-    add_settings_section('evb_settings_section', 'Eventbook settings', 'evb_section_callback_function', 'general');
-    register_setting('general', 'evb_api_token');
+    add_settings_section(
+        'evb_settings_section',
+        __('Eventbook Settings', 'eventbook-api'),
+        'evb_section_callback_function',
+        'general'
+    );
+
+    register_setting('general', 'evb_api_token', [
+        'type' => 'string',
+        'sanitize_callback' => 'sanitize_text_field',
+        'default' => ''
+    ]);
+
     add_settings_field(
         'evb_api_token',
-        'Eventbook API Token',
+        __('Eventbook API Token', 'eventbook-api'),
         'evb_api_token_setting_callback_function',
         'general',
         'evb_settings_section',
-        array( 'label_for' => 'evb_api_token' )
+        array('label_for' => 'evb_api_token')
     );
 }
 
 function evb_api_token_setting_callback_function()
 {
-    return _e('<input type="text" name="evb_api_token" value="' . get_option('evb_api_token') . '" />');
+    $token = get_option('evb_api_token', '');
+    printf(
+        '<input type="text" id="evb_api_token" name="evb_api_token" value="%s" class="regular-text" />',
+        esc_attr($token)
+    );
 }
 
 function evb_section_callback_function()
 {
-    _e('<p>The api token can be obtained by contacting eventbook.ro</p>', 'jwl-ultimate-tinymce');
+    echo '<p>' . esc_html__('The API token can be obtained by contacting eventbook.ro', 'eventbook-api') . '</p>';
 }
 
 /* register api routes */
 add_action('rest_api_init', function () {
-    register_rest_route('eventbook', '/event', [
+    // Public endpoints (no authentication required)
+    register_rest_route('eventbook/v1', '/event', [
         'methods' => 'GET',
-        'callback' => 'getEventInfo'
+        'callback' => 'getEventInfo',
+        'permission_callback' => '__return_true',
+        'args' => [
+            'eventId' => [
+                'required' => true,
+                'validate_callback' => function($param) {
+                    return is_numeric($param);
+                },
+                'sanitize_callback' => 'absint'
+            ]
+        ]
     ]);
-    register_rest_route('eventbook', '/performance', [
+
+    register_rest_route('eventbook/v1', '/performance', [
         'methods' => 'GET',
-        'callback' => 'getPerformance'
+        'callback' => 'getPerformance',
+        'permission_callback' => '__return_true',
+        'args' => [
+            'performanceId' => [
+                'required' => true,
+                'validate_callback' => function($param) {
+                    return is_numeric($param);
+                },
+                'sanitize_callback' => 'absint'
+            ]
+        ]
     ]);
-    register_rest_route('eventbook', '/client', [
+
+    // Endpoints that require API token to be configured
+    register_rest_route('eventbook/v1', '/client', [
         'methods' => 'POST',
-        'callback' => 'addClient'
+        'callback' => 'addClient',
+        'permission_callback' => 'evb_check_api_configured'
     ]);
-    register_rest_route('eventbook', '/transaction', [
+
+    register_rest_route('eventbook/v1', '/transaction', [
+        [
+            'methods' => 'POST',
+            'callback' => 'addTransaction',
+            'permission_callback' => 'evb_check_api_configured'
+        ],
+        [
+            'methods' => 'GET',
+            'callback' => 'getTransaction',
+            'permission_callback' => 'evb_check_api_configured',
+            'args' => [
+                'transactionId' => [
+                    'required' => true,
+                    'validate_callback' => function($param) {
+                        return is_numeric($param);
+                    },
+                    'sanitize_callback' => 'absint'
+                ]
+            ]
+        ]
+    ]);
+
+    register_rest_route('eventbook/v1', '/tickets', [
         'methods' => 'POST',
-        'callback' => 'addTransaction'
+        'callback' => 'addTickets',
+        'permission_callback' => 'evb_check_api_configured'
     ]);
-    register_rest_route('eventbook', '/transaction', [
-        'methods' => 'GET',
-        'callback' => 'getTransaction'
-    ]);
-    register_rest_route('eventbook', '/tickets', [
+
+    register_rest_route('eventbook/v1', '/tickets/remove', [
         'methods' => 'POST',
-        'callback' => 'addTickets'
+        'callback' => 'deleteTicket',
+        'permission_callback' => 'evb_check_api_configured',
+        'args' => [
+            'ticketId' => [
+                'required' => true,
+                'validate_callback' => function($param) {
+                    return is_numeric($param);
+                },
+                'sanitize_callback' => 'absint'
+            ]
+        ]
     ]);
-    register_rest_route('eventbook', '/tickets/remove', [
+
+    register_rest_route('eventbook/v1', '/apply-discount-code', [
         'methods' => 'POST',
-        'callback' => 'deleteTicket'
-    ]);
-    register_rest_route('eventbook', '/apply-discount-code', [
-        'methods' => 'POST',
-        'callback' => 'applyDiscountCode'
+        'callback' => 'applyDiscountCode',
+        'permission_callback' => 'evb_check_api_configured',
+        'args' => [
+            'code' => [
+                'required' => true,
+                'sanitize_callback' => 'sanitize_text_field'
+            ],
+            'transaction_id' => [
+                'required' => true,
+                'validate_callback' => function($param) {
+                    return is_numeric($param);
+                },
+                'sanitize_callback' => 'absint'
+            ]
+        ]
     ]);
 });
 
+/**
+ * Check if API token is configured
+ */
+function evb_check_api_configured()
+{
+    $token = get_option('evb_api_token', '');
+    if (empty($token)) {
+        return new WP_Error(
+            'eventbook_not_configured',
+            __('Eventbook API token is not configured. Please configure it in Settings > General.', 'eventbook-api'),
+            array('status' => 403)
+        );
+    }
+    return true;
+}
+
 function getApiToken()
 {
-    return get_option('evb_api_token');
+    return get_option('evb_api_token', '');
 }
 
 function getEventInfo($request)
 {
     $api = new Api(getApiToken());
-    $eventId = (int) $request->get_param('eventId');
-    return rest_ensure_response($api->getEventInfo($eventId));
+    $eventId = absint($request->get_param('eventId'));
+    $result = $api->getEventInfo($eventId);
+    return rest_ensure_response($result);
 }
 
 function getPerformance($request)
 {
     $api = new Api(getApiToken());
-    $performanceId = (int) $request->get_param('performanceId');
-    return rest_ensure_response($api->getPerformance($performanceId));
+    $performanceId = absint($request->get_param('performanceId'));
+    $result = $api->getPerformance($performanceId);
+    return rest_ensure_response($result);
 }
 
 function addClient($request)
 {
     $api = new Api(getApiToken());
     $client = $request->get_json_params();
-    return rest_ensure_response($api->saveClient($client));
+
+    if (empty($client)) {
+        return new WP_Error(
+            'invalid_data',
+            __('Invalid client data provided.', 'eventbook-api'),
+            array('status' => 400)
+        );
+    }
+
+    $result = $api->saveClient($client);
+    return rest_ensure_response($result);
 }
 
 function addTickets($request)
 {
     $api = new Api(getApiToken());
     $ticketOrder = $request->get_json_params();
-    return rest_ensure_response($api->addTickets($ticketOrder));
+
+    if (empty($ticketOrder)) {
+        return new WP_Error(
+            'invalid_data',
+            __('Invalid ticket order data provided.', 'eventbook-api'),
+            array('status' => 400)
+        );
+    }
+
+    $result = $api->addTickets($ticketOrder);
+    return rest_ensure_response($result);
 }
 
 function deleteTicket($request)
 {
     $api = new Api(getApiToken());
-    $ticketId = (int) $request->get_param('ticketId');
-    return rest_ensure_response($api->deleteTicket($ticketId));
+    $ticketId = absint($request->get_param('ticketId'));
+    $result = $api->deleteTicket($ticketId);
+    return rest_ensure_response($result);
 }
 
 function addTransaction($request)
 {
     $api = new Api(getApiToken());
-    return rest_ensure_response($api->addTransaction());
+    $result = $api->addTransaction();
+    return rest_ensure_response($result);
 }
 
 function getTransaction($request)
 {
     $api = new Api(getApiToken());
-    $transactionId = (int) $request->get_param('transactionId');
-    return rest_ensure_response($api->getTransaction($transactionId));
+    $transactionId = absint($request->get_param('transactionId'));
+    $result = $api->getTransaction($transactionId);
+    return rest_ensure_response($result);
 }
 
 function applyDiscountCode($request)
 {
     $api = new Api(getApiToken());
-    $code = $request->get_param('code');
-    $transactionId = (int) $request->get_param('transaction_id');
-    return rest_ensure_response($api->applyDiscountCode($code, $transactionId));
+    $code = sanitize_text_field($request->get_param('code'));
+    $transactionId = absint($request->get_param('transaction_id'));
+    $result = $api->applyDiscountCode($code, $transactionId);
+    return rest_ensure_response($result);
 }
 
-/*
- * register the evb.js file
+/**
+ * Register and enqueue the evb.js file
  */
 add_action('wp_enqueue_scripts', 'register_evb_javascripts');
 function register_evb_javascripts()
 {
-    wp_register_script('evb.js', plugins_url('/js/evb.js', __FILE__), [], '', true);
-    wp_enqueue_script('evb.js');
+    wp_enqueue_script(
+        'eventbook-api',
+        plugins_url('/js/evb.js', __FILE__),
+        [],
+        '0.0.2',
+        true
+    );
 }
