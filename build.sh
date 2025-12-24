@@ -52,9 +52,11 @@ rm -f "./$BUILD_FOLDER/$PLUGIN_FOLDER/phpunit.xml"
 rm -f "./$BUILD_FOLDER/$PLUGIN_FOLDER/.gitignore"
 rm -f "./$BUILD_FOLDER/$PLUGIN_FOLDER/.env"
 
-# Copy README to plugin directory
+# Copy README to plugin directory (for GitHub users)
 echo "Copying README..."
 cp ./README.md "./$BUILD_FOLDER/$PLUGIN_FOLDER/"
+
+# Note: readme.txt is already in the plugin directory for WordPress.org
 
 # Create archives
 echo "Creating archives..."

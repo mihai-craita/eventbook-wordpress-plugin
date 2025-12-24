@@ -4,11 +4,28 @@ A WordPress plugin that integrates the Eventbook API for event ticketing and man
 
 ## Installation
 
-1. Download the plugin archive (zip or tar.gz)
-2. Upload to your WordPress site via **Plugins > Add New > Upload Plugin**
-3. Activate the plugin
-4. Go to **Settings > General** and scroll to the **Eventbook settings** section
-5. Enter your Eventbook API token
+### From GitHub Releases (Current)
+
+1. Download the latest release ZIP from the [Releases page](https://github.com/mihai-craita/eventbook-wordpress-plugin/releases)
+2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**
+3. Upload the ZIP file and click **Install Now**
+4. Activate the plugin
+5. Go to **Settings > General** and scroll to the **Eventbook settings** section
+6. Enter your Eventbook API token
+
+### From WordPress.org (Coming Soon)
+
+Once submitted to the WordPress Plugin Directory, you'll be able to install directly from WordPress admin:
+1. Go to **Plugins > Add New**
+2. Search for "Eventbook API"
+3. Click **Install Now** then **Activate**
+4. Configure your API token in **Settings > General**
+
+### Manual Installation (Development)
+
+1. Clone this repository
+2. Run `./build.sh` to create the plugin archive
+3. Install the generated ZIP from `build/eventbook-{version}.zip`
 
 ## Getting an API Key
 
