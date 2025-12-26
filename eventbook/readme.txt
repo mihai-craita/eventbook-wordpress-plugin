@@ -94,6 +94,18 @@ async function evbTest() {
 
 evbTest();`
 
+== Privacy ==
+
+This plugin connects to the Eventbook API (eventbook.ro) to provide ticketing functionality. When you use this plugin:
+
+* Client information (names, email addresses, phone numbers) is transmitted to eventbook.ro
+* Transaction and ticket data is stored on Eventbook servers
+* API requests include your configured API token for authentication
+
+Please review Eventbook's privacy policy at https://eventbook.ro/privacy before using this plugin.
+
+No data is transmitted to third parties without your explicit use of the plugin's functions.
+
 == Frequently Asked Questions ==
 
 = Where do I get an API token? =

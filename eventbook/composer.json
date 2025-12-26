@@ -2,9 +2,7 @@
     "name": "mihai/eventbook-wordpress-plugin",
     "description": "Wordpress plugin for eventbook api",
     "type": "plugin",
-    "require": {
-        "guzzlehttp/guzzle": "^7.3"
-    },
+    "require": {},
     "license": "MIT",
     "autoload": {
         "psr-4": {

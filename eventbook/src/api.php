@@ -2,8 +2,6 @@
 
 namespace Eventbook;
 
-use GuzzleHttp\Client;
-
 class Api
 {
     private $baseUri;
@@ -11,126 +9,144 @@ class Api
 
     public function __construct($accessToken, $baseUri = 'https://eventbook.ro/api/')
     {
-        $this->baseUri = $baseUri;
+        $this->baseUri = rtrim($baseUri, '/') . '/';
         $this->accessToken = $accessToken;
     }
 
     public function getEventInfo(int $eventId)
     {
-        try {
-            $client = new Client(['base_uri' => $this->baseUri]);
-            $response = $client->request('GET', 'events/' . $eventId);
-            return \json_decode($response->getBody()->getContents());
-        } catch (\Exception $ex) {
-            return $ex->getMessage();
+        $url = $this->baseUri . 'events/' . $eventId;
+        $response = wp_remote_get($url);
+
+        if (is_wp_error($response)) {
+            return $response->get_error_message();
         }
+
+        $body = wp_remote_retrieve_body($response);
+        return json_decode($body);
     }
 
     public function getPerformance(int $performanceId)
     {
-        try {
-            $client = new Client(['base_uri' => $this->baseUri]);
-            $response = $client->request('GET', 'performances/' . $performanceId);
-            return \json_decode($response->getBody()->getContents());
-        } catch (\Exception $ex) {
-            return $ex->getMessage();
+        $url = $this->baseUri . 'performances/' . $performanceId;
+        $response = wp_remote_get($url);
+
+        if (is_wp_error($response)) {
+            return $response->get_error_message();
         }
+
+        $body = wp_remote_retrieve_body($response);
+        return json_decode($body);
     }
 
     public function saveClient($client)
     {
-        try {
-            $apiClient = new Client(['base_uri' => $this->baseUri]);
-            $response = $apiClient->request('POST', 'client', [
-                'json' => $client,
-                'headers' => $this->getAuthHeaders()
-            ]);
-            $responseClient = json_decode($response->getBody()->getContents(), true);
-            return $responseClient;
-        } catch (\Exception $ex) {
-            return $ex->getMessage();
+        $url = $this->baseUri . 'client';
+        $response = wp_remote_post($url, [
+            'headers' => $this->getAuthHeaders(),
+            'body' => json_encode($client),
+            'timeout' => 15
+        ]);
+
+        if (is_wp_error($response)) {
+            return $response->get_error_message();
         }
+
+        $body = wp_remote_retrieve_body($response);
+        return json_decode($body, true);
     }
 
     public function addTickets($ticketOrder)
     {
-        try {
-            $apiClient = new Client([ 'base_uri' => $this->baseUri ]);
-            $response = $apiClient->request('POST', 'tickets/add', [
-                'json' => $ticketOrder,
-                'headers' => $this->getAuthHeaders()
-            ]);
-            $content = $response->getBody()->getContents();
-            $responseClient = json_decode($content, true);
-            return $responseClient;
-        } catch (\Exception $ex) {
-            return $ex->getMessage();
+        $url = $this->baseUri . 'tickets/add';
+        $response = wp_remote_post($url, [
+            'headers' => $this->getAuthHeaders(),
+            'body' => json_encode($ticketOrder),
+            'timeout' => 15
+        ]);
+
+        if (is_wp_error($response)) {
+            return $response->get_error_message();
         }
+
+        $body = wp_remote_retrieve_body($response);
+        return json_decode($body, true);
     }
 
     public function addTransaction()
     {
-        try {
-            $apiClient = new Client([ 'base_uri' => $this->baseUri ]);
-            $response = $apiClient->request('POST', 'transaction', [
-                'headers' => $this->getAuthHeaders()
-            ]);
-            $content = $response->getBody()->getContents();
-            $responseClient = json_decode($content, true);
-            return $responseClient;
-        } catch (\Exception $ex) {
-            return $ex->getMessage();
+        $url = $this->baseUri . 'transaction';
+        $response = wp_remote_post($url, [
+            'headers' => $this->getAuthHeaders(),
+            'timeout' => 15
+        ]);
+
+        if (is_wp_error($response)) {
+            return $response->get_error_message();
         }
+
+        $body = wp_remote_retrieve_body($response);
+        return json_decode($body, true);
     }
 
     public function getTransaction(int $transactionId)
     {
-        try {
-            $client = new Client(['base_uri' => $this->baseUri]);
-            $response = $client->request('GET', 'transaction/' . $transactionId, [
-                'headers' => $this->getAuthHeaders()
-            ]);
-            return \json_decode($response->getBody()->getContents());
-        } catch (\Exception $ex) {
-            throw $ex;
-            return $ex->getMessage();
+        $url = $this->baseUri . 'transaction/' . $transactionId;
+        $response = wp_remote_get($url, [
+            'headers' => $this->getAuthHeaders(),
+            'timeout' => 15
+        ]);
+
+        if (is_wp_error($response)) {
+            throw new \Exception($response->get_error_message());
         }
+
+        $body = wp_remote_retrieve_body($response);
+        return json_decode($body);
     }
 
     public function deleteTicket(int $ticketId)
     {
-        try {
-            $client = new Client(['base_uri' => $this->baseUri]);
-            $client->request('DELETE', 'tickets/remove/' . $ticketId, [
-                'headers' => $this->getAuthHeaders()
-            ]);
-            return true;
-        } catch (\Exception $ex) {
-            throw $ex;
-            return false;
+        $url = $this->baseUri . 'tickets/remove/' . $ticketId;
+        $response = wp_remote_request($url, [
+            'method' => 'DELETE',
+            'headers' => $this->getAuthHeaders(),
+            'timeout' => 15
+        ]);
+
+        if (is_wp_error($response)) {
+            throw new \Exception($response->get_error_message());
         }
+
+        return true;
     }
 
     public function applyDiscountCode(string $code, int $transactionId)
     {
-        try {
-            $apiClient = new Client(['base_uri' => $this->baseUri]);
-            $response = $apiClient->request('POST', 'discount-code', [
-                'form_params' => ['code' => $code, 'transaction_id' => $transactionId],
-                'headers' => $this->getAuthHeaders()
-            ]);
-            $responseClient = json_decode($response->getBody()->getContents(), true);
-            return $responseClient;
-        } catch (\Exception $ex) {
-            return $ex->getMessage();
+        $url = $this->baseUri . 'discount-code';
+        $response = wp_remote_post($url, [
+            'headers' => $this->getAuthHeaders(),
+            'body' => [
+                'code' => $code,
+                'transaction_id' => $transactionId
+            ],
+            'timeout' => 15
+        ]);
+
+        if (is_wp_error($response)) {
+            return $response->get_error_message();
         }
+
+        $body = wp_remote_retrieve_body($response);
+        return json_decode($body, true);
     }
 
     private function getAuthHeaders(): array
     {
         return [
             'Authorization' => 'Bearer ' . $this->accessToken,
-            'Accept'     => 'application/json',
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json'
         ];
     }
 }
