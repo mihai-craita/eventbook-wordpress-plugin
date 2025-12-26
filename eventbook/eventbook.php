@@ -4,7 +4,7 @@
  * Plugin Name: Eventbook Api Requests
  * Plugin URI: https://eventbook.ro/
  * Description: WordPress plugin that integrates the Eventbook API for event ticketing and management.
- * Version: 0.0.2
+ * Version: 0.0.3
  * Author: Mihai Craita
  * Author URI: https://eventbook.ro/
  * Requires at least: 5.5
