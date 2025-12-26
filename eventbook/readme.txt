@@ -2,7 +2,7 @@
 Contributors: mihaicraita
 Tags: eventbook, events, ticketing, api, booking
 Requires at least: 5.5
-Tested up to: 6.7
+Tested up to: 6.9
 Stable tag: 0.0.3
 Requires PHP: 7.4
 License: MIT

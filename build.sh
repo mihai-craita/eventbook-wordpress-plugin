@@ -41,9 +41,14 @@ mkdir -p "$BUILD_FOLDER"
 echo "Copying plugin files..."
 cp -r "./$PLUGIN_FOLDER" "$BUILD_FOLDER/"
 
-# Install production dependencies
-echo "Installing production dependencies..."
-composer install -q --optimize-autoloader --no-dev --working-dir="./$BUILD_FOLDER/$PLUGIN_FOLDER"
+# Remove composer files - we'll create minimal autoloader
+echo "Removing composer files..."
+rm -f "./$BUILD_FOLDER/$PLUGIN_FOLDER/composer.lock"
+rm -rf "./$BUILD_FOLDER/$PLUGIN_FOLDER/vendor"
+
+# Since we have no production dependencies, just create minimal autoloader
+echo "Creating autoloader..."
+composer dump-autoload --optimize --no-dev --working-dir="./$BUILD_FOLDER/$PLUGIN_FOLDER"
 
 # Remove development files
 echo "Removing development files..."
@@ -51,6 +56,11 @@ rm -rf "./$BUILD_FOLDER/$PLUGIN_FOLDER/tests"
 rm -f "./$BUILD_FOLDER/$PLUGIN_FOLDER/phpunit.xml"
 rm -f "./$BUILD_FOLDER/$PLUGIN_FOLDER/.gitignore"
 rm -f "./$BUILD_FOLDER/$PLUGIN_FOLDER/.env"
+rm -f "./$BUILD_FOLDER/$PLUGIN_FOLDER/.phpunit.result.cache"
+rm -f "./$BUILD_FOLDER/$PLUGIN_FOLDER/composer.lock"
+
+# Remove any other hidden files
+find "./$BUILD_FOLDER/$PLUGIN_FOLDER" -name ".*" -type f -delete
 
 # Copy README to plugin directory (for GitHub users)
 echo "Copying README..."
